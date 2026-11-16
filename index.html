@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#192743">
+  <title>LIBRISPHERE | Digital Library</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1b2945;
+      --muted: #777580;
+      --purple: #6b5098;
+      --lavender: #eee9f7;
+      --green: #45876d;
+      --gold: #d3aa4d;
+      --line: #e7e4e9;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      border-top: 12px solid var(--ink);
+      background: #f7f6f3;
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .page {
+      width: min(1120px, 100%);
+      min-height: calc(100vh - 12px);
+      margin: 0 auto;
+      padding: 28px 25px 24px;
+      overflow: hidden;
+      border: 1px solid #e8e5e1;
+      border-top: 0;
+      border-radius: 0 0 58px 58px;
+      background: #fff;
+    }
+
+    .eyebrow {
+      margin: 0 0 22px 70px;
+      color: #77747b;
+      font-size: 10px;
+    }
+
+    .eyebrow span { margin: 0 6px; color: #c4c0c7; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      min-height: 46px;
+      margin-bottom: 15px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--purple);
+      font-size: clamp(20px, 2.3vw, 25px);
+      font-weight: 700;
+      letter-spacing: .3px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .brand-mark { font-size: 23px; }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(18px, 4.7vw, 54px);
+    }
+
+    nav a {
+      color: #1f1d24;
+      font-size: 12px;
+      text-decoration: none;
+    }
+
+    nav a:hover, nav a:focus-visible { color: var(--purple); }
+
+    .login, .search-form button {
+      border: 0;
+      border-radius: 5px;
+      background: var(--purple);
+      color: #fff;
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .login {
+      min-width: 185px;
+      padding: 10px 20px;
+      font-size: 12px;
+      text-decoration: none;
+    }
+
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      min-height: 130px;
+      padding: 18px 26px;
+      border-radius: 20px;
+      background: var(--lavender);
+    }
+
+    .hero-copy { flex: 1 1 65%; }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(25px, 3vw, 32px);
+      letter-spacing: .2px;
+    }
+
+    .hero-copy > p {
+      margin: 0 0 12px 3px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .search-form {
+      display: flex;
+      gap: 14px;
+      max-width: 515px;
+      margin-left: 2px;
+    }
+
+    .search-form input {
+      min-width: 0;
+      flex: 1;
+      padding: 8px 11px;
+      border: 1px solid #ece9ef;
+      border-radius: 4px;
+      background: white;
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 11px;
+    }
+
+    .search-form button { min-width: 92px; padding: 8px 18px; font-size: 11px; }
+    .login:hover, .search-form button:hover { background: #574080; }
+
+    .library-art {
+      display: grid;
+      flex: 0 1 34%;
+      justify-items: center;
+      gap: 12px;
+      padding-right: 20px;
+    }
+
+    .library-art strong { font-size: 11px; letter-spacing: .3px; }
+    .book-stack { position: relative; width: 190px; height: 57px; }
+
+    .book {
+      position: absolute;
+      height: 21px;
+      border-radius: 4px;
+    }
+
+    .book::before {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      left: 10px;
+      width: 5px;
+      background: rgba(255,255,255,.92);
+      content: "";
+    }
+
+    .book-one { top: 0; left: 25px; width: 137px; background: var(--green); }
+    .book-two { top: 20px; left: 1px; width: 141px; background: var(--purple); }
+    .book-three { top: 25px; left: 49px; width: 137px; background: var(--gold); }
+
+    .featured { margin-top: 21px; }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 0 10px;
+      padding: 0 0 0 1px;
+    }
+
+    .section-heading h2 { margin: 0; font-size: 19px; }
+
+    .section-heading a {
+      color: var(--purple);
+      font-size: 11px;
+      text-decoration: none;
+    }
+
+    .section-heading a span { padding-left: 4px; }
+
+    .book-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 27px;
+      padding: 0 1px;
+    }
+
+    .book-card {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+      min-height: 138px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: 0 1px 2px rgba(30, 30, 40, .03);
+    }
+
+    .cover {
+      display: grid;
+      flex: 0 0 69px;
+      height: 90px;
+      place-items: center;
+      padding: 8px 5px;
+      color: white;
+      text-align: center;
+      font-size: 9px;
+      font-weight: 700;
+      line-height: 1.45;
+      box-shadow: inset -3px 0 rgba(0,0,0,.08);
+    }
+
+    .cover-navy { background: #192743; }
+    .cover-purple { background: #6c5099; }
+    .cover-green { background: #46856d; }
+    .cover-gold { background: #d1a84c; }
+
+    .book-info { min-width: 0; }
+
+    .book-info h3 {
+      margin: 0 0 17px;
+      font-size: 10px;
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+
+    .book-info p {
+      margin: 0 0 9px;
+      color: var(--muted);
+      font-size: 9px;
+      white-space: nowrap;
+    }
+
+    .book-info a {
+      display: block;
+      padding: 6px 10px;
+      border-radius: 3px;
+      background: #eee9f5;
+      color: var(--purple);
+      font-size: 9px;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .book-info a:hover { background: #e2d9ef; }
+
+    .info-panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 14px 1px 0;
+    }
+
+    .info-panel {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      min-height: 50px;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #f7f6fa;
+    }
+
+    .info-panel h2 {
+      flex: 0 0 auto;
+      margin: 0;
+      color: var(--purple);
+      font-size: 10px;
+    }
+
+    .info-panel:last-child h2 { color: var(--green); }
+    .info-panel p { margin: 0; color: #45424a; font-size: 10px; }
+
+    .content-section {
+      margin: 24px 1px 0;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      scroll-margin-top: 16px;
+    }
+
+    .content-section h2 { margin: 0 0 8px; font-size: 19px; }
+    .content-section > p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+
+    .form-message {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .library-form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      max-width: 700px;
+      margin-top: 14px;
+    }
+
+    .library-form label { display: grid; gap: 5px; font-size: 12px; }
+    .library-form input, .library-form select, .library-form textarea {
+      width: 100%;
+      min-height: 36px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 12px;
+    }
+
+    .library-form button, .dialog-close, .return-button {
+      width: fit-content;
+      border: 0;
+      border-radius: 5px;
+      background: var(--purple);
+      color: #fff;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .library-form button { padding: 9px 16px; }
+    .library-form button:hover, .dialog-close:hover, .return-button:hover { background: #574080; }
+    .library-form .wide { grid-column: 1 / -1; }
+
+    .borrower-table-wrap { margin-top: 12px; overflow-x: auto; }
+    .borrower-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+    .borrower-table th, .borrower-table td { padding: 9px 10px; border-bottom: 1px solid var(--line); }
+    .borrower-table th { background: #f7f6fa; color: var(--ink); }
+    .return-button { padding: 6px 9px; font-size: 11px; }
+
+    .book-info button {
+      width: 100%;
+      padding: 6px 10px;
+      border: 0;
+      border-radius: 3px;
+      background: #eee9f5;
+      color: var(--purple);
+      font-family: inherit;
+      font-size: 9px;
+      cursor: pointer;
+    }
+
+    .book-info button:hover { background: #e2d9ef; }
+
+    dialog {
+      width: min(420px, calc(100% - 32px));
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--ink);
+      box-shadow: 0 14px 44px rgba(27, 41, 69, .2);
+    }
+
+    dialog::backdrop { background: rgba(18, 26, 43, .48); }
+    dialog h2 { margin: 0 0 8px; font-size: 20px; }
+    dialog p { color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .dialog-close { padding: 8px 14px; }
+
+    @media (max-width: 850px) {
+      .page { padding-right: 20px; padding-left: 20px; }
+      .topbar { flex-wrap: wrap; }
+      nav { order: 3; width: 100%; gap: 28px; padding-top: 5px; }
+      .login { margin-left: auto; }
+      .book-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+      .book-card { justify-content: center; }
+    }
+
+    @media (max-width: 560px) {
+      .page { padding: 22px 14px; border-radius: 0 0 30px 30px; }
+      .eyebrow { margin-left: 5px; }
+      .topbar { gap: 12px; }
+      .brand { font-size: 19px; }
+      .login { min-width: auto; padding: 9px 12px; }
+      nav { justify-content: space-between; gap: 10px; }
+      nav a { font-size: 11px; }
+      .hero { align-items: flex-start; padding: 20px 17px; }
+      .hero-copy { min-width: 0; }
+      .hero-copy > p { line-height: 1.5; }
+      .library-art { display: none; }
+      .search-form { gap: 7px; }
+      .search-form button { min-width: 76px; }
+      .book-grid { grid-template-columns: 1fr; gap: 10px; }
+      .book-card { justify-content: flex-start; min-height: 125px; padding: 13px 18px; }
+      .cover { flex-basis: 74px; height: 96px; }
+      .book-info { flex: 1; }
+      .book-info h3 { font-size: 11px; }
+      .library-form { grid-template-columns: 1fr; }
+      .library-form .wide { grid-column: auto; }
+      .content-section { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">LibriSphere Digital Library <span>|</span> Website preview</p>
+
+    <header class="topbar">
+      <a class="brand" href="#home" aria-label="LibriSphere home"><span class="brand-mark" aria-hidden="true">📚</span> LIBRISPHERE</a>
+      <nav aria-label="Main navigation">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#books">Books</a>
+        <a href="#borrowers">Borrowers</a>
+        <a href="#borrowing">Borrowing</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <a class="login" href="#student-login">Student Login</a>
+    </header>
+
+    <section class="hero" id="home" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <h1 id="hero-title">Discover. Read. Learn.</h1>
+        <p>Explore learning resources and library materials in one place.</p>
+        <form class="search-form" role="search">
+          <input id="book-search" type="search" placeholder="Search by book title, author or category..." aria-label="Search books">
+          <button type="submit">Search</button>
+        </form>
+      </div>
+      <div class="library-art" aria-label="Your digital library">
+        <strong>YOUR DIGITAL LIBRARY</strong>
+        <div class="book-stack" aria-hidden="true">
+          <span class="book book-one"></span>
+          <span class="book book-two"></span>
+          <span class="book book-three"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="about" aria-labelledby="about-title">
+      <h2 id="about-title">About LibriSphere</h2>
+      <p>LibriSphere is a digital library for discovering learning resources, browsing featured books, and managing borrowing requests in one place.</p>
+    </section>
+
+    <section class="featured" id="books" aria-labelledby="books-title">
+      <div class="section-heading">
+        <h2 id="books-title">Featured Books</h2>
+        <a href="#books" id="view-all-books">View all books <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="book-grid">
+        <article class="book-card" data-title="Introduction to Library Science" data-author="Not provided" data-category="Library Science">
+          <div class="cover cover-navy" aria-hidden="true">LIBRARY</div>
+          <div class="book-info">
+            <h3>Introduction to<br> Library Science</h3>
+            <p>Author: Not provided</p>
+            <button type="button" class="book-details">View details</button>
+          </div>
+        </article>
+        <article class="book-card" data-title="Information Resources" data-author="Not provided" data-category="Information Resources">
+          <div class="cover cover-purple" aria-hidden="true">INFO</div>
+          <div class="book-info">
+            <h3>Information<br> Resources</h3>
+            <p>Author: Not provided</p>
+            <button type="button" class="book-details">View details</button>
+          </div>
+        </article>
+        <article class="book-card" data-title="Research Methods" data-author="Not provided" data-category="Research Methods">
+          <div class="cover cover-green" aria-hidden="true">RESEARCH</div>
+          <div class="book-info">
+            <h3>Research<br> Methods</h3>
+            <p>Author: Not provided</p>
+            <button type="button" class="book-details">View details</button>
+          </div>
+        </article>
+        <article class="book-card" data-title="Digital Library Basics" data-author="Not provided" data-category="Digital Library">
+          <div class="cover cover-gold" aria-hidden="true">DIGITAL</div>
+          <div class="book-info">
+            <h3>Digital Library<br> Basics</h3>
+            <p>Author: Not provided</p>
+            <button type="button" class="book-details">View details</button>
+          </div>
+        </article>
+      </div>
+      <p class="form-message" id="search-message" aria-live="polite"></p>
+    </section>
+
+    <section class="content-section" id="student-login" aria-labelledby="login-title">
+      <h2 id="login-title">Student Login (Demo)</h2>
+      <p>This browser-only demo does not verify accounts or passwords. Enter your name and student ID to prefill a borrowing request on this device.</p>
+      <form class="library-form" id="login-form">
+        <label>Name
+          <input name="name" autocomplete="name" required>
+        </label>
+        <label>Student ID
+          <input name="studentId" autocomplete="username" required>
+        </label>
+        <button type="submit">Continue to borrowing</button>
+      </form>
+      <p class="form-message" id="login-message" aria-live="polite"></p>
+    </section>
+
+    <section class="content-section" id="borrowers" aria-labelledby="borrowers-title">
+      <h2 id="borrowers-title">Borrowers</h2>
+      <p>Active borrowing requests created in this browser are listed below. No account data is sent to a server.</p>
+      <div class="borrower-table-wrap">
+        <table class="borrower-table">
+          <thead>
+            <tr><th>Borrower</th><th>Student ID</th><th>Book</th><th>Requested</th><th>Action</th></tr>
+          </thead>
+          <tbody id="borrower-list"></tbody>
+        </table>
+      </div>
+      <p class="form-message" id="borrower-message" aria-live="polite"></p>
+    </section>
+
+    <section class="content-section" id="borrowing" aria-labelledby="borrowing-title">
+      <h2 id="borrowing-title">Borrow a Book</h2>
+      <p>Submit a local demo request. Your name and student ID are stored only in this browser.</p>
+      <form class="library-form" id="borrowing-form">
+        <label>Name
+          <input name="name" autocomplete="name" required>
+        </label>
+        <label>Student ID
+          <input name="studentId" required>
+        </label>
+        <label class="wide">Book
+          <select name="book" required>
+            <option value="">Choose a book</option>
+            <option>Introduction to Library Science</option>
+            <option>Information Resources</option>
+            <option>Research Methods</option>
+            <option>Digital Library Basics</option>
+          </select>
+        </label>
+        <button type="submit">Request book</button>
+      </form>
+      <p class="form-message" id="borrowing-message" aria-live="polite"></p>
+    </section>
+
+    <section class="content-section" id="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title">Contact</h2>
+      <p>Library contact details have not been configured yet. Please check with your school library for its official email address and phone number.</p>
+    </section>
+  </main>
+  <dialog id="book-dialog" aria-labelledby="dialog-title">
+    <h2 id="dialog-title"></h2>
+    <p id="dialog-description"></p>
+    <button class="dialog-close" type="button">Close</button>
+  </dialog>
+  <script>
+    const searchForm = document.querySelector(".search-form");
+    const searchInput = document.querySelector("#book-search");
+    const bookCards = [...document.querySelectorAll(".book-card")];
+    const searchMessage = document.querySelector("#search-message");
+
+    searchForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const query = searchInput.value.trim().toLowerCase();
+      const matches = bookCards.filter((card) => {
+        const matched = card.textContent.toLowerCase().includes(query)
+          || card.dataset.title.toLowerCase().includes(query)
+          || card.dataset.author.toLowerCase().includes(query)
+          || card.dataset.category.toLowerCase().includes(query);
+        card.hidden = query !== "" && !matched;
+        return !card.hidden;
+      });
+      searchMessage.textContent = matches.length
+        ? `${matches.length} book${matches.length === 1 ? "" : "s"} found.`
+        : "No books match your search.";
+      document.querySelector("#books").scrollIntoView({ behavior: "smooth" });
+    });
+
+    searchInput.addEventListener("input", () => {
+      if (searchInput.value.trim() === "") {
+        bookCards.forEach((card) => { card.hidden = false; });
+        searchMessage.textContent = "";
+      }
+    });
+
+    document.querySelector("#view-all-books").addEventListener("click", () => {
+      bookCards.forEach((card) => { card.hidden = false; });
+      searchInput.value = "";
+      searchMessage.textContent = "Showing all books.";
+    });
+
+    const bookDialog = document.querySelector("#book-dialog");
+    document.querySelectorAll(".book-details").forEach((button) => {
+      button.addEventListener("click", () => {
+        const card = button.closest(".book-card");
+        document.querySelector("#dialog-title").textContent = card.dataset.title;
+        document.querySelector("#dialog-description").textContent =
+          `Category: ${card.dataset.category}. Author: ${card.dataset.author}.`;
+        bookDialog.showModal();
+      });
+    });
+    document.querySelector(".dialog-close").addEventListener("click", () => bookDialog.close());
+    bookDialog.addEventListener("click", (event) => {
+      if (event.target === bookDialog) bookDialog.close();
+    });
+
+    const storageKey = "librisPhereBorrowRequests";
+    const borrowerList = document.querySelector("#borrower-list");
+    const borrowerMessage = document.querySelector("#borrower-message");
+    let borrowRequests = [];
+    try {
+      const savedRequests = localStorage.getItem(storageKey);
+      const parsedRequests = savedRequests ? JSON.parse(savedRequests) : [];
+      const validRequests = Array.isArray(parsedRequests) && parsedRequests.every((request) =>
+        request
+        && typeof request.name === "string"
+        && typeof request.studentId === "string"
+        && typeof request.book === "string"
+        && typeof request.requestedAt === "string"
+        && typeof request.returned === "boolean"
+      );
+      if (!validRequests) throw new Error("Saved borrowing data is invalid.");
+      borrowRequests = parsedRequests;
+    } catch (error) {
+      borrowerMessage.textContent = "Saved requests could not be loaded. New requests may replace invalid browser data.";
+      console.error("Could not load LibriSphere borrowing requests.", error);
+    }
+
+    function renderBorrowers() {
+      borrowerList.replaceChildren();
+      const activeRequests = borrowRequests.filter((request) => !request.returned);
+      if (!activeRequests.length) {
+        const row = borrowerList.insertRow();
+        const cell = row.insertCell();
+        cell.colSpan = 5;
+        cell.textContent = "No active borrowing requests yet.";
+        return;
+      }
+
+      activeRequests.forEach((request) => {
+        const row = borrowerList.insertRow();
+        [request.name, request.studentId, request.book, request.requestedAt].forEach((value) => {
+          row.insertCell().textContent = value;
+        });
+        const actionCell = row.insertCell();
+        const returnButton = document.createElement("button");
+        returnButton.type = "button";
+        returnButton.className = "return-button";
+        returnButton.textContent = "Return";
+        returnButton.addEventListener("click", () => {
+          request.returned = true;
+          saveRequests();
+        });
+        actionCell.append(returnButton);
+      });
+    }
+
+    function saveRequests() {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(borrowRequests));
+        borrowerMessage.textContent = "Borrowing list updated on this device.";
+        renderBorrowers();
+      } catch (error) {
+        borrowerMessage.textContent = "Could not save your request in this browser. Check storage settings and try again.";
+        console.error("Could not save LibriSphere borrowing requests.", error);
+      }
+    }
+
+    renderBorrowers();
+
+    document.querySelector("#borrowing-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
+      borrowRequests.push({
+        name: formData.get("name").trim(),
+        studentId: formData.get("studentId").trim(),
+        book: formData.get("book"),
+        requestedAt: new Date().toLocaleDateString(),
+        returned: false
+      });
+      saveRequests();
+      if (!borrowerMessage.textContent.startsWith("Could not save")) {
+        document.querySelector("#borrowing-message").textContent = "Request added to the local borrowers list.";
+        event.currentTarget.reset();
+      }
+    });
+
+    document.querySelector("#login-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
+      const borrowingForm = document.querySelector("#borrowing-form");
+      borrowingForm.elements.name.value = formData.get("name").trim();
+      borrowingForm.elements.studentId.value = formData.get("studentId").trim();
+      document.querySelector("#login-message").textContent =
+        "Demo profile ready. Continue below to submit a borrowing request.";
+      document.querySelector("#borrowing").scrollIntoView({ behavior: "smooth" });
+      borrowingForm.elements.book.focus({ preventScroll: true });
+    });
+  </script>
+</body>
+</html>
